@@ -37,10 +37,43 @@ See [SKILL.md](SKILL.md) for complete documentation including:
 | `templates/sld-report.qmd` | Quarto report template |
 | `references/sld-conventions.md` | SLD symbology reference |
 
+## Workflow Integration
+
+This skill is part of the puran-water electrical engineering workflow:
+
+```
+┌─────────────────────────┐     ┌──────────────────────────┐     ┌─────────────────────┐
+│  equipment-list-skill   │ ──► │    load-list-skill       │ ──► │ electrical-         │
+│  (equipment + power_kw) │     │    (FLC, protection,     │     │ distribution-skill  │
+└─────────────────────────┘     │     MCC schedules)       │     │ (this skill)        │
+                                └──────────────────────────┘     └─────────────────────┘
+                                                                            │
+                                                                            ▼
+                                                                 ┌─────────────────────┐
+                                                                 │ plantuml-sld-mcp    │
+                                                                 │ (MCP server)        │
+                                                                 └─────────────────────┘
+                                                                            │
+                                                                            ▼
+                                                                 ┌─────────────────────┐
+                                                                 │ SLD Topology YAML   │
+                                                                 │ PlantUML PNG/SVG    │
+                                                                 │ Shareable URLs      │
+                                                                 └─────────────────────┘
+```
+
 ## Related
 
-- [plantuml-sld-mcp-server](https://github.com/puran-water/plantuml-sld-mcp-server) - MCP server
-- [load-list-skill](https://github.com/puran-water/load-list-skill) - Upstream data
+### MCP Server
+- [plantuml-sld-mcp-server](https://github.com/puran-water/plantuml-sld-mcp-server) - MCP server that renders SLDs
+
+### Upstream Skills (Data Sources)
+- [load-list-skill](https://github.com/puran-water/load-list-skill) - Electrical load lists with MCC schedules
+- [equipment-list-skill](https://github.com/puran-water/equipment-list-skill) - Equipment lists with power ratings
+
+### Similar Pattern (Control Systems)
+- [csa-diagram-skill](https://github.com/puran-water/csa-diagram-skill) - Control System Architecture diagrams
+- [plantuml-csa-mcp-server](https://github.com/puran-water/plantuml-csa-mcp-server) - CSA MCP server
 
 ## License
 
