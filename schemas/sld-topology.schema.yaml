@@ -1,0 +1,415 @@
+# SLD Topology Schema v1.0
+# JSON Schema for electrical Single-Line Diagram topology
+# Used by plantuml-sld-mcp-server
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://puran-water.github.io/schemas/sld-topology/1.0"
+title: SLD Topology
+description: Electrical Single-Line Diagram topology definition
+
+type: object
+required:
+  - metadata
+properties:
+  schema_version:
+    type: string
+    default: "1.0"
+    description: Schema version for compatibility
+
+  metadata:
+    $ref: "#/$defs/SLDMetadata"
+
+  buses:
+    type: array
+    items:
+      $ref: "#/$defs/SLDBus"
+    default: []
+
+  equipment:
+    type: array
+    items:
+      $ref: "#/$defs/SLDEquipment"
+    default: []
+
+  connections:
+    type: array
+    items:
+      $ref: "#/$defs/SLDConnection"
+    default: []
+
+  distribution_template:
+    type: string
+    enum:
+      - single_utility_radial
+      - dual_utility_redundant
+      - utility_plus_generator
+    description: Distribution template used for bootstrap
+
+  view_mode:
+    type: string
+    enum:
+      - system
+      - detailed
+    default: detailed
+    description: Rendering view mode
+
+$defs:
+  VoltageLevel:
+    type: string
+    enum:
+      # Medium Voltage
+      - "33kV"
+      - "22kV"
+      - "13.8kV"
+      - "11kV"
+      - "6.6kV"
+      - "4.16kV"
+      - "3.3kV"
+      # Low Voltage 60Hz
+      - "600V"
+      - "575V"
+      - "480V"
+      - "240V"
+      - "208V"
+      - "120V"
+      # Low Voltage 50Hz
+      - "690V"
+      - "415V"
+      - "400V"
+      - "380V"
+      - "230V"
+
+  BusType:
+    type: string
+    enum:
+      - Main_Switchboard
+      - MCC
+      - Distribution_Panel
+      - Substation
+      - Busduct
+      - Bus_Section
+
+  EquipmentType:
+    type: string
+    enum:
+      # Sources
+      - Utility
+      - Generator
+      - UPS
+      - PV
+      - Battery
+      # Transformers
+      - Transformer
+      - Auto_Transformer
+      # Protective Devices
+      - ACB
+      - MCCB
+      - MCB
+      - Fuse
+      - Fused_Switch
+      - Disconnect
+      - Tie_Breaker
+      - Bus_Coupler
+      - ATS
+      - MTS
+      # Motor Starters
+      - DOL_Starter
+      - Star_Delta
+      - Soft_Starter
+      - VFD
+      - Contactor
+      # Loads
+      - Motor
+      - Heater
+      - Lighting
+      - Receptacle
+      - HVAC
+      - Vendor_Package
+      # Power Quality
+      - Capacitor_Bank
+      - Harmonic_Filter
+      - Surge_Arrester
+      # System
+      - Grounding
+      - Neutral_Bus
+      - Metering
+      - CT
+      - PT
+
+  ProtectionType:
+    type: string
+    enum:
+      - ACB
+      - MCCB
+      - MPCB
+      - MCB
+      - GFCI
+      - AFCI
+      - Fuse_Dual_Element
+      - Fuse_Non_Time_Delay
+      - Fuse_HRC
+      - Overload
+      - Motor_Starter
+      - Relay
+      - None
+
+  ConnectionType:
+    type: string
+    enum:
+      - Feeder
+      - Branch
+      - Bus_Tie
+      - Bus_Coupler
+      - Control
+      - Grounding
+
+  ConnectionState:
+    type: string
+    enum:
+      - Closed
+      - Open
+      - NC  # Normally Closed
+      - NO  # Normally Open
+
+  FeederType:
+    type: string
+    enum:
+      - DOL
+      - VFD
+      - VFD-EXT
+      - Soft-Starter
+      - Star-Delta
+      - Vendor
+      - Metering
+      - Spare
+
+  SLDMetadata:
+    type: object
+    required:
+      - project_name
+    properties:
+      project_name:
+        type: string
+      site:
+        type: string
+        default: ""
+      revision:
+        type: string
+        default: "A"
+      date:
+        type: string
+        default: ""
+      author:
+        type: string
+        default: ""
+      description:
+        type: string
+        default: ""
+      voltage_system:
+        type: string
+        default: "400V/230V 3Ph 4W"
+      frequency:
+        type: integer
+        enum: [50, 60]
+        default: 50
+      system_grounding:
+        type: string
+        default: "TN-S"
+      fault_level_ka:
+        type: number
+        default: 0
+      fault_level_source:
+        type: string
+        default: ""
+      fault_level_verified:
+        type: boolean
+        default: false
+      code_basis:
+        type: string
+        default: "IEC"
+      motor_standard:
+        type: string
+        default: "IEC"
+
+  SLDBus:
+    type: object
+    required:
+      - id
+      - bus_type
+      - voltage
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+        default: ""
+      bus_type:
+        $ref: "#/$defs/BusType"
+      voltage:
+        $ref: "#/$defs/VoltageLevel"
+      phases:
+        type: integer
+        enum: [1, 3]
+        default: 3
+      rated_current_A:
+        type: number
+        default: 0
+      sccr_kA:
+        type: number
+        default: 0
+      connected_kW:
+        type: number
+        default: 0
+      running_kW:
+        type: number
+        default: 0
+      demand_kW:
+        type: number
+        default: 0
+      location:
+        type: string
+        default: ""
+      area:
+        type: string
+        default: ""
+      description:
+        type: string
+        default: ""
+      collapsed:
+        type: boolean
+        default: false
+      feeder_count:
+        type: integer
+        default: 0
+      source_ref:
+        type: string
+        default: ""
+        description: Reference to load-list panel tag
+
+  SLDEquipment:
+    type: object
+    required:
+      - id
+      - equipment_type
+    properties:
+      id:
+        type: string
+      equipment_type:
+        $ref: "#/$defs/EquipmentType"
+      name:
+        type: string
+        default: ""
+      rated_kW:
+        type: number
+        default: 0
+      rated_kVA:
+        type: number
+        default: 0
+      rated_current_A:
+        type: number
+        default: 0
+      voltage:
+        $ref: "#/$defs/VoltageLevel"
+      primary_voltage:
+        oneOf:
+          - $ref: "#/$defs/VoltageLevel"
+          - type: "null"
+      secondary_voltage:
+        oneOf:
+          - $ref: "#/$defs/VoltageLevel"
+          - type: "null"
+      impedance_pct:
+        type: number
+        default: 0
+      flc_A:
+        type: number
+        default: 0
+        description: Full Load Current from code tables
+      fla_A:
+        type: number
+        default: 0
+        description: Full Load Amps from nameplate
+      lra_A:
+        type: number
+        default: 0
+        description: Locked Rotor Amps
+      efficiency_pct:
+        type: number
+        default: 0
+      power_factor:
+        type: number
+        default: 0
+      motor_poles:
+        type: integer
+        default: 4
+      parent_bus:
+        type: string
+        default: ""
+      feeder_type:
+        oneOf:
+          - $ref: "#/$defs/FeederType"
+          - type: string
+        default: ""
+      protection:
+        $ref: "#/$defs/ProtectionType"
+      protection_rating_A:
+        type: number
+        default: 0
+      vfd_frame:
+        type: string
+        default: ""
+      vfd_input_current_A:
+        type: number
+        default: 0
+      device_state:
+        oneOf:
+          - $ref: "#/$defs/ConnectionState"
+          - type: "null"
+      description:
+        type: string
+        default: ""
+      source_ref:
+        type: string
+        default: ""
+        description: Reference to load-list equipment tag
+
+  SLDConnection:
+    type: object
+    required:
+      - source
+      - target
+    properties:
+      source:
+        type: string
+      target:
+        type: string
+      connection_type:
+        $ref: "#/$defs/ConnectionType"
+        default: Feeder
+      state:
+        $ref: "#/$defs/ConnectionState"
+        default: Closed
+      cable_size:
+        type: string
+        default: ""
+      cable_type:
+        type: string
+        default: ""
+      cable_length_m:
+        type: number
+        default: 0
+      cable_count:
+        type: integer
+        default: 1
+      protection_rating_A:
+        type: number
+        default: 0
+      protection_type:
+        $ref: "#/$defs/ProtectionType"
+        default: None
+      description:
+        type: string
+        default: ""
+      label:
+        type: string
+        default: ""
